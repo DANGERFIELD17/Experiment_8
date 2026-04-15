@@ -1,24 +1,5 @@
-import { useMemo, useState } from 'react'
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  FormControlLabel,
-  IconButton,
-  InputAdornment,
-  Paper,
-  Stack,
-  Switch,
-  TextField,
-  Typography,
-  createTheme,
-} from '@mui/material'
-import { ThemeProvider } from '@mui/material/styles'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import Visibility from '@mui/icons-material/Visibility'
-import VisibilityOff from '@mui/icons-material/VisibilityOff'
 
 const VALID_USER = {
   email: 'student@college.edu',
@@ -34,35 +15,6 @@ function App() {
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [authenticatedUser, setAuthenticatedUser] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: 'light',
-          primary: {
-            main: '#0d9488',
-          },
-          secondary: {
-            main: '#0369a1',
-          },
-          background: {
-            default: '#f1f5f9',
-          },
-        },
-        shape: {
-          borderRadius: 16,
-        },
-        typography: {
-          fontFamily: '"Outfit", "Segoe UI", sans-serif',
-          h4: {
-            fontWeight: 700,
-            letterSpacing: '-0.03em',
-          },
-        },
-      }),
-    [],
-  )
 
   const {
     control,
@@ -107,162 +59,115 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          minHeight: '100dvh',
-          display: 'grid',
-          placeItems: 'center',
-          px: 2,
-          background:
-            'radial-gradient(circle at 15% 10%, #a7f3d0 0%, rgba(167, 243, 208, 0) 48%), radial-gradient(circle at 90% 90%, #bae6fd 0%, rgba(186, 230, 253, 0) 45%), linear-gradient(135deg, #ecfeff 0%, #f8fafc 55%, #e0f2fe 100%)',
-        }}
-      >
-        <Container maxWidth="sm" disableGutters>
-          <Paper
-            elevation={5}
-            sx={{
-              p: { xs: 3, sm: 4 },
-              borderRadius: 5,
-              border: '1px solid rgba(2, 132, 199, 0.15)',
-              backdropFilter: 'blur(4px)',
+    <main className="page-shell">
+      <section className="login-card">
+        <header className="hero-copy">
+          <p className="eyebrow">React State Management Lab</p>
+          <h1>Secure Login Portal</h1>
+          <p className="subcopy">
+            Client-side validation, controlled inputs, loading feedback, and state-driven alerts.
+          </p>
+          <p className="hint">Demo credentials: student@college.edu / React@123</p>
+        </header>
+
+        {status.type === 'success' && <div className="alert success">{status.message}</div>}
+        {status.type === 'error' && <div className="alert error">{status.message}</div>}
+
+        <form className="login-form" noValidate onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="email"
+            control={control}
+            rules={{
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, 
+                message: 'Enter a valid email address',
+              },
             }}
-          >
-            <Stack spacing={3}>
-              <Box>
-                <Typography variant="h4" component="h1" gutterBottom>
-                  Secure Login Portal
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Use your college credentials to access the dashboard.
-                </Typography>
-                <Typography variant="caption" color="text.secondary" display="block" mt={1}>
-                  Demo credentials: student@college.edu / React@123
-                </Typography>
-              </Box>
+            render={({ field }) => (
+              <label className="field">
+                <span>Email</span>
+                <input
+                  {...field}
+                  type="email"
+                  autoComplete="username"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? 'email-error' : undefined}
+                />
+                {errors.email && (
+                  <small id="email-error" className="field-error">
+                    {errors.email.message}
+                  </small>
+                )}
+              </label>
+            )}
+          />
 
-              {status.type === 'success' && (
-                <Alert severity="success" role="status">
-                  {status.message}
-                </Alert>
-              )}
-
-              {status.type === 'error' && (
-                <Alert severity="error" role="alert">
-                  {status.message}
-                </Alert>
-              )}
-
-              <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
-                <Stack spacing={2.25}>
-                  <Controller
-                    name="email"
-                    control={control}
-                    rules={{
-                      required: 'Email is required',
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-                        message: 'Enter a valid email address',
-                      },
-                    }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        type="email"
-                        label="Email"
-                        fullWidth
-                        autoComplete="username"
-                        error={Boolean(errors.email)}
-                        helperText={errors.email?.message}
-                      />
-                    )}
+          <Controller
+            name="password"
+            control={control}
+            rules={{
+              required: 'Password is required',
+              minLength: {
+                value: 8,
+                message: 'Password must be at least 8 characters',
+              },
+            }}
+            render={({ field }) => (
+              <label className="field">
+                <span>Password</span>
+                <div className="password-row">
+                  <input
+                    {...field}
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    maxLength={64}
+                    aria-invalid={Boolean(errors.password)}
+                    aria-describedby={errors.password ? 'password-error' : undefined}
                   />
-
-                  <Controller
-                    name="password"
-                    control={control}
-                    rules={{
-                      required: 'Password is required',
-                      minLength: {
-                        value: 8,
-                        message: 'Password must be at least 8 characters',
-                      },
-                    }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        type={showPassword ? 'text' : 'password'}
-                        label="Password"
-                        fullWidth
-                        autoComplete="current-password"
-                        error={Boolean(errors.password)}
-                        helperText={errors.password?.message}
-                        inputProps={{
-                          maxLength: 64,
-                        }}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                edge="end"
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                aria-label="toggle password visibility"
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    )}
-                  />
-
-                  <Controller
-                    name="rememberMe"
-                    control={control}
-                    render={({ field: { value, onChange, ...field } }) => (
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            {...field}
-                            checked={value}
-                            onChange={(event) => onChange(event.target.checked)}
-                          />
-                        }
-                        label="Remember me on this device"
-                      />
-                    )}
-                  />
-
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    disabled={loading}
-                    sx={{ py: 1.4, fontWeight: 600 }}
+                  <button
+                    type="button"
+                    className="ghost-button"
+                    onClick={() => setShowPassword((prev) => !prev)}
                   >
-                    {loading ? (
-                      <Stack direction="row" spacing={1.2} alignItems="center">
-                        <CircularProgress size={18} color="inherit" />
-                        <span>Authenticating...</span>
-                      </Stack>
-                    ) : (
-                      'Sign In'
-                    )}
-                  </Button>
-                </Stack>
-              </Box>
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+                {errors.password && (
+                  <small id="password-error" className="field-error">
+                    {errors.password.message}
+                  </small>
+                )}
+              </label>
+            )}
+          />
 
-              <Typography variant="body2" color="text.secondary">
-                {authenticatedUser
-                  ? `Logged in as: ${authenticatedUser}`
-                  : 'No active authenticated user.'}
-              </Typography>
-            </Stack>
-          </Paper>
-        </Container>
-      </Box>
-    </ThemeProvider>
+          <Controller
+            name="rememberMe"
+            control={control}
+            render={({ field: { value, onChange, ...field } }) => (
+              <label className="remember-row">
+                <input
+                  {...field}
+                  type="checkbox"
+                  checked={value}
+                  onChange={(event) => onChange(event.target.checked)}
+                />
+                <span>Remember me on this device</span>
+              </label>
+            )}
+          />
+
+          <button className="submit-button" type="submit" disabled={loading}>
+            {loading ? 'Authenticating...' : 'Sign In'}
+          </button>
+        </form>
+
+        <p className="session-state">
+          {authenticatedUser ? `Logged in as: ${authenticatedUser}` : 'No active authenticated user.'}
+        </p>
+      </section>
+    </main>
   )
 }
 
