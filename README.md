@@ -1,4 +1,4 @@
-# Experiment 8
+# experminet_8
 
 This project is a React login form built with React Hook Form and ready to deploy on GitHub Pages.
 
@@ -22,7 +22,7 @@ The repo is configured to deploy from the `main` branch using GitHub Actions.
 After the workflow finishes, the site will be available at:
 
 ```text
-https://DANGERFIELD17.github.io/Experiment_8/
+https://DANGERFIELD17.github.io/experminet_8/
 ```
 
 ## Build
