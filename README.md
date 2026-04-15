@@ -22,7 +22,7 @@ The repo is configured to deploy from the `main` branch using GitHub Actions.
 After the workflow finishes, the site will be available at:
 
 ```text
-https://DANGERFIELD17.github.io/Experiment_3.1/
+https://DANGERFIELD17.github.io/Experiment_8/
 ```
 
 ## Build
